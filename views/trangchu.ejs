@@ -1,0 +1,22 @@
+<html>
+    <head>
+        <title>Demo socket IO</title>
+        <script src="jquery.js"></script>
+        <!-- thu vien mat dinh khi cai socket.io
+        neu muon tach client rieng de goi thi copy thu vien nay ve
+        tai thu muc public de su dung -->
+        <script src="socket.io/socket.io.js"></script>
+        
+        <script>
+            //goi dien ket noi len server
+            var socket = io("http://localhost:3000");
+            
+            $(document).ready(function(){
+                //alert("hello jquery");
+            })
+        </script>
+    </head>
+    <body>
+        day la trang chu html
+    </body>
+</html>
