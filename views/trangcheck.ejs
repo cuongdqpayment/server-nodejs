@@ -1,0 +1,53 @@
+<html>
+    <head>
+        <title>Trang check demo</title>
+        <script src="jquery.js"></script>
+        <!-- thu vien mat dinh khi cai socket.io
+        neu muon tach client rieng de goi thi copy thu vien nay ve
+        tai thu muc public de su dung -->
+        <script src="socket.io/socket.io.js"></script>
+        
+        <script>
+            //goi dien ket noi len server
+            var socket = io("http://localhost:3000?token=cuongdq"/* ,{ 
+                forceNew: true,
+                path: '/myownpath'
+             } */
+             );
+            
+            $(document).ready(function(){
+                //alert("hello jquery");
+                socket.on('connect', () => {
+                    console.log("Connected = " + socket.connected); // true
+                });
+
+                //client
+                socket.on('connect_timeout', (timeout) => {
+                    console.log('Connect timeout: ' + JSON.stringify(timeout));
+                });
+                
+                socket.on('disconnect', (reason) => {
+                    console.log('disconnect: ' + JSON.stringify(reason));
+                    if (reason === 'io server disconnect') {
+                        // the disconnection was initiated by the server, you need to reconnect manually
+                        socket.connect();
+                    }
+                    // else the socket will automatically try to reconnect
+                });
+                
+                socket.on('ping', (res) => {
+                    console.log('ping: ' + JSON.stringify(res));
+                    
+                });
+                
+                socket.on('pong', (latency) => {
+                    console.log('pong: ' + JSON.stringify(latency));
+                });
+
+            })
+        </script>
+    </head>
+    <body>
+        day la trang check nhe
+    </body>
+</html>

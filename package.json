@@ -2,7 +2,7 @@
   "name": "demo",
   "version": "1.0.0",
   "description": "This is project demo for nodejs and socket io by cuong.dq",
-  "main": "index.js",
+  "main": "socket.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

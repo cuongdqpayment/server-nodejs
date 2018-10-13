@@ -9,10 +9,14 @@
         
         <script>
             //goi dien ket noi len server
-            var socket = io("http://localhost:3000");
+            var socket = io("http://localhost:3000"/* ,{ 
+                forceNew: true,
+                path: '/myownpath'
+                } */
+             );
             
             $(document).ready(function(){
-                //alert("hello jquery");
+                //de 
             })
         </script>
     </head>
