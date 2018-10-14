@@ -25,7 +25,7 @@ function isValid(tk) {
 }
 
 var request_count = 0;
-var requets_err = 0;
+var requet_err = 0;
 var request_token = 0;
 
 // middleware kiem tra token truoc khi cho ket noi
@@ -44,7 +44,7 @@ io.use((socket, next) => {
       return next();
     }
 
-    requets_err++;
+    requet_err++;
     return next(new Error('authentication error'));
   });
   
@@ -66,7 +66,7 @@ io.on("connection", function(socket){
     //thong bao cho trang quan tri biet tinh hinh hoat dong tong quat cua he thong
     socket.emit('server-send-admin-info', { request_count: request_count,
                                             request_token: request_token,
-                                            requets_err: requets_err });
+                                            requet_err: requet_err });
    
     socket.on("create-room",(roomId)=>{
         //join vao mot room ten la data

@@ -15,10 +15,10 @@
             $(document).ready(function(){
                 
                 socket.on('server-send-admin-info',(data)=>{
-                    $("#dsRoom").html(
-                        "<h1>REQUEST COUNT: </h1>"+ data.request_count +"<br>" +
-                        "<h1>REQUEST TOKEN: </h1>"+ data.request_token +"<br>" +
-                        "<h1>REQUEST ERROR: </h1>"+ data.request_err +"<br>"
+                    $("#dsInfo").html(
+                        "<h4>REQUEST COUNT:</h4>"+ data.request_count +"<br>" +
+                        "<h4>REQUEST TOKEN:</h4>"+ data.request_token +"<br>" +
+                        "<h4>REQUEST ERROR:</h4>"+ data.request_err +"<br>"
                     );
                 });
 
@@ -33,7 +33,7 @@
         </script>
     </head>
     <body>
-        <h3> CUONGDQONLINE service chat</h3>
+        <h1> CUONGDQONLINE service chat</h1>
         <div id="left">
             <h2>Server Info:</h2>
                 <div id="dsInfo"></div>
