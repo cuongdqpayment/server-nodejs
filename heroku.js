@@ -54,7 +54,7 @@ io.use((socket, next) => {
                         request_token: request_token,
                         request_err: request_err });
 
-    /* io.sockets.in("ADMIN").emit('server-send-admin-info', 
+/* io.sockets.in("ADMIN").emit('server-send-admin-info', 
         { request_count: request_count,
         request_token: request_token,
         request_err: request_err });
@@ -81,24 +81,6 @@ io.on("connection", function(socket){
     socket.TokenRequest=socket.handshake.query.token;
     socket.ROOM=socket.handshake.query.room;
 
-    if (socket.ROM=='ADMIN'){
-        //neu room la ADMIN tuc la trang web test
-        socket.join(socket.ROM);
-        
-        io.sockets.in("ADMIN").emit('server-send-admin-info', 
-                                    { request_count: request_count,
-                                    request_token: request_token,
-                                    request_err: request_err });
-    }
-
-    var rooms=[];
-    for (i in socket.adapter.rooms){
-        rooms.push(i);
-    }
-    //gui toan bo danh sach rooms cho all user
-    io.sockets.emit("server-send-rooms",rooms);
-
-
     //hien chi cho phep nhom token=cuongdq moi vao duoc day
     console.log("Seq ("+ ++request_token +") connecting: " + socket.id + ' ' + JSON.stringify(socket.request.connection._peername)
     + ", " + socket.ROOM);      
@@ -111,7 +93,24 @@ io.on("connection", function(socket){
         //consol.log(socket.adapter.rooms);
         
         //gui cho chinh socket vua tao
-        socket.emit("server-send-room-socket",data);
+        socket.emit("server-send-room-socket",roomId);
+
+        //gui thong tin server cho room vua join
+        if (socket.ROM=='ADMIN'){
+            io.sockets.in("ADMIN").emit('server-send-admin-info', 
+                                        { request_count: request_count,
+                                        request_token: request_token,
+                                        request_err: request_err });
+        }
+    
+        var rooms=[];
+        for (i in socket.adapter.rooms){
+            rooms.push(i);
+        }
+        //gui toan bo danh sach rooms cho all user
+        io.sockets.emit("server-send-rooms",rooms);
+
+
 
     })
                                             

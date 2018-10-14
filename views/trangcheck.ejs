@@ -13,6 +13,8 @@
              );
             
             $(document).ready(function(){
+
+                socket.emit("create-room","ADMIN");
                 
                 socket.on('server-send-admin-info',(data)=>{
                         
