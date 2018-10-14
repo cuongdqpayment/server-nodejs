@@ -6,48 +6,43 @@
         neu muon tach client rieng de goi thi copy thu vien nay ve
         tai thu muc public de su dung -->
         <script src="socket.io/socket.io.js"></script>
-        
+        <link rel="stylesheet" type="text/css" href="layout.css">
         <script>
             //goi dien ket noi len server
-            var socket = io("https://cuongdqonline.herokuapp.com?token=cuongdq"/* ,{ 
-                forceNew: true,
-                path: '/myownpath'
-             } */
+            var socket = io("https://cuongdqonline.herokuapp.com?token=cuongdq"
              );
             
             $(document).ready(function(){
-                //alert("hello jquery");
-                socket.on('connect', () => {
-                    console.log("Connected = " + socket.connected); // true
+                
+                socket.on('server-send-admin-info',(data)=>{
+                    $("#dsRoom").html(
+                        "<h1>REQUEST COUNT: </h1>"+ data.request_count +"<br>" +
+                        "<h1>REQUEST TOKEN: </h1>"+ data.request_token +"<br>" +
+                        "<h1>REQUEST ERROR: </h1>"+ data.request_err +"<br>"
+                    );
                 });
 
-                //client
-                socket.on('connect_timeout', (timeout) => {
-                    console.log('Connect timeout: ' + JSON.stringify(timeout));
-                });
-                
-                socket.on('disconnect', (reason) => {
-                    console.log('disconnect: ' + JSON.stringify(reason));
-                    if (reason === 'io server disconnect') {
-                        // the disconnection was initiated by the server, you need to reconnect manually
-                        socket.connect();
-                    }
-                    // else the socket will automatically try to reconnect
-                });
-                
-                socket.on('ping', (res) => {
-                    console.log('ping: ' + JSON.stringify(res));
-                    
-                });
-                
-                socket.on('pong', (latency) => {
-                    console.log('pong: ' + JSON.stringify(latency));
-                });
-
+                socket.on("server-send-rooms",(rooms)=>{       
+                    $("#dsRoom").html("");
+                    //data la 1 array nen map la duyet ds
+                    rooms.map((r)=>{
+                        $("#dsRoom").append("<h4 class='room'>"+r+"</h4>");
+                    })
+                })
             })
         </script>
     </head>
     <body>
-        Testing Cuongdq
+        <h3> CUONGDQONLINE service chat</h3>
+        <div id="left">
+            <h2>Server Info:</h2>
+                <div id="dsInfo"></div>
+            <h2>Rooms</h2>
+                <div id="dsRoom"></div>
+        </div>
+        <h4 id="curRoom">...</h4>
+        <div id="right">
+
+        </div>
     </body>
 </html>
