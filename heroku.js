@@ -48,11 +48,10 @@ io.use((socket, next) => {
     } 
 
     //thong bao cho trang quan tri biet tinh hinh hoat dong tong quat cua he thong
-    socket.emit('server-send-admin-info', 
+    io.sockets.in("ADMIN").emit('server-send-admin-info', 
         { request_count: request_count,
         request_token: request_token,
         request_err: request_err });
-    
 
     if (isOK) {
         return next();
@@ -74,14 +73,17 @@ io.on("connection", function(socket){
     //moi khi co nguoi request io thanh cong voi token quy dinh
     //ghi lai token requet vao day de biet ho truy cap nhom lam viec nao
     socket.TokenRequest=socket.handshake.query.token;
-    //hien chi cho phep nhom token=cuongdq moi vao duoc day
-    console.log("Seq ("+ ++request_token +") connecting: " + socket.id + ' ' + JSON.stringify(socket.request.connection._peername));  
+    socket.ROOM=socket.handshake.query.room;
 
-    /* socket.emit('server-send-admin-info', 
-        { request_count: request_count,
-        request_token: request_token,
-        request_err: request_err }); */
-    
+    if (socket.ROM=='ADMIN'){
+        //neu room la ADMIN tuc la trang web test
+        socket.join(socket.ROM);
+        //thi ta truc tiep join vao room ADMIN
+    }
+
+    //hien chi cho phep nhom token=cuongdq moi vao duoc day
+    console.log("Seq ("+ ++request_token +") connecting: " + socket.id + ' ' + JSON.stringify(socket.request.connection._peername)
+    + ", " + socket.ROOM);      
 
     socket.on("create-room",(roomId)=>{
         //join vao mot room ten la data
