@@ -53,10 +53,12 @@ io.use((socket, next) => {
         request_token: request_token,
         request_err: request_err });
      */
-    if (isOK) {
+
+    //if (isOK) {
         return next();
-    }
-    return next(new Error('authentication error'));
+    //}
+
+    //return next(new Error('authentication error'));
 
   });
   
