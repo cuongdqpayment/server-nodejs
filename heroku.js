@@ -30,7 +30,7 @@ var request_err = 0;
 
 // middleware kiem tra token truoc khi cho ket noi
 io.use((socket, next) => { 
-    var isOk = false;
+    var isOK = false;
 
     var ip = socket.handshake.headers["x-forwarded-for"];
     var user_agent = socket.handshake.headers['user-agent'];
@@ -42,7 +42,7 @@ io.use((socket, next) => {
     let token = socket.handshake.query.token;
     //neu client khong co ip, khong khai bao moi truong thi se bi reject khong cho vao phong chat
     if (isValid(token)&&ip!=''&&user_agent!='') {
-        isOk = true;
+        isOK = true;
     }else {
         request_err++;
     } 
@@ -54,7 +54,7 @@ io.use((socket, next) => {
         request_err: request_err });
     
 
-    if (isOK==true) {
+    if (isOK) {
         return next();
     }
 
