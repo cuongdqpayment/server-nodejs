@@ -54,11 +54,6 @@ io.use((socket, next) => {
                         request_token: request_token,
                         request_err: request_err });
 
-/* io.sockets.in("ADMIN").emit('server-send-admin-info', 
-        { request_count: request_count,
-        request_token: request_token,
-        request_err: request_err });
- */
     if (isOK) {
         return next();
     }
@@ -96,12 +91,11 @@ io.on("connection", function(socket){
         socket.emit("server-send-room-socket",roomId);
 
         //gui thong tin server cho room vua join
-        if (socket.ROM=='ADMIN'){
-            io.sockets.in("ADMIN").emit('server-send-admin-info', 
-                                        { request_count: request_count,
-                                        request_token: request_token,
-                                        request_err: request_err });
-        }
+        socket.broadcast.emit('server-send-admin-info', 
+                        { request_count: request_count,
+                        request_token: request_token,
+                        request_err: request_err });
+
     
         var rooms=[];
         for (i in socket.adapter.rooms){
