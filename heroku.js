@@ -117,6 +117,13 @@ io.on("connection", function(socket){
     socket.on("disconnect",function(){
         console.log("Disconnect seq(" + request_token-- +"): " + socket.id);  
         io.emit('users-changed', { user: socket.nickname, event: 'left' });
+
+        //gui di trong nhom admin
+        io.sockets.in("ADMIN").emit('server-send-admin-info', 
+                                        { request_count: request_count,
+                                        request_token: request_token,
+                                        request_err: request_err });
+
     });
 
 
