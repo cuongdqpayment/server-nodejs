@@ -66,7 +66,7 @@ io.on("connection", function(socket){
     //thong bao cho trang quan tri biet tinh hinh hoat dong tong quat cua he thong
     socket.emit('server-send-admin-info', { request_count: request_count,
                                             request_token: request_token,
-                                            request_err: requet_err });
+                                            request_err: request_err });
    
     socket.on("create-room",(roomId)=>{
         //join vao mot room ten la data
