@@ -81,12 +81,14 @@ io.on("connection", function(socket){
     socket.TokenRequest=socket.handshake.query.token;
     socket.ROOM=socket.handshake.query.room;
 
-    //console.log("Room: " + socket.ROOM);
-
     if (socket.ROM=='ADMIN'){
         //neu room la ADMIN tuc la trang web test
         socket.join(socket.ROM);
-        //thi ta truc tiep join vao room ADMIN
+        
+        io.sockets.in("ADMIN").emit('server-send-admin-info', 
+                                    { request_count: request_count,
+                                    request_token: request_token,
+                                    request_err: request_err });
     }
 
     var rooms=[];
