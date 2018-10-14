@@ -16,9 +16,9 @@
                 
                 socket.on('server-send-admin-info',(data)=>{
                     $("#dsInfo").html(
-                        "<h4>REQUEST COUNT:</h4>"+ data.request_count +"<br>" +
-                        "<h4>REQUEST TOKEN:</h4>"+ data.request_token +"<br>" +
-                        "<h4>REQUEST ERROR:</h4>"+ data.request_err +"<br>"
+                        "<h4>REQUEST COUNT: "+ data.request_count +"</h4>" +
+                        "<h4>REQUEST TOKEN: "+ data.request_token +"</h4>" +
+                        "<h4>REQUEST ERROR: "+ data.request_err +"</h4>"
                     );
                 });
 
