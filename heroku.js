@@ -35,7 +35,8 @@ function isValid(tk) {
 io.use((socket, next) => {
     
     //xem thu socket co gi
-    console.log(socket);
+    console.log(socket.handshake.headers);
+    console.log(socket.handshake.query);
     
     //chuoi handshake.query la sau dau ?
     let token = socket.handshake.query.token;
