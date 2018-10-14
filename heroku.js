@@ -48,11 +48,17 @@ io.use((socket, next) => {
     } 
 
     //thong bao cho trang quan tri biet tinh hinh hoat dong tong quat cua he thong
-    io.sockets.in("ADMIN").emit('server-send-admin-info', 
+   
+    socket.broadcast.emit('server-send-admin-info', 
+                        { request_count: request_count,
+                        request_token: request_token,
+                        request_err: request_err });
+
+    /* io.sockets.in("ADMIN").emit('server-send-admin-info', 
         { request_count: request_count,
         request_token: request_token,
         request_err: request_err });
-
+ */
     if (isOK) {
         return next();
     }
