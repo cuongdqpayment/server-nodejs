@@ -42,7 +42,7 @@ io.use((socket, next) => {
     let token = socket.handshake.query.token;
     //neu client khong co ip, khong khai bao moi truong thi se bi reject khong cho vao phong chat
     if (isValid(token)&&ip!=''&&user_agent!='') {
-        isOk=true;
+        isOk = true;
     }else {
         request_err++;
     } 
@@ -52,9 +52,11 @@ io.use((socket, next) => {
         request_token: request_token,
         request_err: request_err });
     
-    if (isOK) return next();
-    
+    if (isOK) {
+        return next();
+    }
     return next(new Error('authentication error'));
+    
   });
   
 
