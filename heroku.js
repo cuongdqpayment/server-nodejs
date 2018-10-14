@@ -75,6 +75,8 @@ io.on("connection", function(socket){
     socket.TokenRequest=socket.handshake.query.token;
     socket.ROOM=socket.handshake.query.room;
 
+    console.log("Room: " + socket.ROOM);
+
     if (socket.ROM=='ADMIN'){
         //neu room la ADMIN tuc la trang web test
         socket.join(socket.ROM);
