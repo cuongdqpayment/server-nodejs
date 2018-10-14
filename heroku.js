@@ -1,3 +1,6 @@
+//may chu heroku, phuc vu test online cho ionic 
+//va web server
+
 var express = require("express");
 var app = express();
 app.use(express.static("./public"));
@@ -22,16 +25,6 @@ function isValid(tk) {
 }
 
 // middleware kiem tra token truoc khi cho ket noi
-/**
- * /socket.io/?token= cuongdq&
- * EIO= 3&
- * transport= polling&
- * t= MPn58ac&
- * sid=O6qU-2OPedMGXTt6AAAC" 
- * host=cuongdqonline.herokuapp.com 
- * request_id=df6e1dd4-d961-4a0a-bb60-c13a8736a126 
- * fwd="123.19.231.242" dyno=web.1 connect=1ms service=1278ms status=200 bytes=225 protocol=https
- */
 io.use((socket, next) => {
     
     //Lay dia chi ip yeu cau tu dau
@@ -57,14 +50,26 @@ server.listen(port, function () {
 
 //lang nghe client ket noi len server
 io.on("connection", function(socket){
+    //ghi lai token requet vao day de biet ho truy cap nhom lam viec nao
     socket.TokenRequest=socket.handshake.query.token;
-    
+    //hien chi cho phep nhom token=cuongdq moi vao duoc day
     console.log("Co "+socket.TokenRequest+" ket noi len server: " + socket.id + ' ' + JSON.stringify(socket.request.connection._peername));  
    
     socket.on("disconnect",function(){
         console.log("Ngat " +socket.TokenRequest +" ket noi: " + socket.id);  
-
+        io.emit('users-changed', { user: socket.nickname, event: 'left' });
     });
+
+
+    socket.on('set-nickname', (nickname) => {
+        socket.nickname = nickname;
+        io.emit('users-changed', { user: nickname, event: 'joined' });
+    });
+
+    socket.on('add-message', (message) => {
+        io.emit('message', { text: message.text, from: socket.nickname, created: new Date() });
+    });
+
 
 });
 

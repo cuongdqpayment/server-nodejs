@@ -1,3 +1,5 @@
+//test thu kiem tra trung gian local
+
 var express = require("express");
 var app = express();
 app.use(express.static("./public"));

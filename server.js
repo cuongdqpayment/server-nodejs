@@ -1,3 +1,6 @@
+//file nay phuc vu cho java demo, lay tu socket.io example
+//clone from github
+
 var fs = require('fs');
 
 var server;

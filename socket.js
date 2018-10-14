@@ -1,3 +1,5 @@
+//test thu ionic
+
 let app = require('express')();
 let http = require('http').Server(app);
 let io = require('socket.io')(http);
@@ -11,7 +13,6 @@ http.listen(port, function () {
 
 io.on('connection', (socket) => {
     //lay dia chi ip cua may tram
-    var address = socket.handshake.address;
     console.log('New connection from: ' + socket.id + ' ' + JSON.stringify(socket.request.connection._peername));
     
     socket.on('disconnect', function () {
