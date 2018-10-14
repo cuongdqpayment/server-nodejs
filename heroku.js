@@ -75,13 +75,21 @@ io.on("connection", function(socket){
     socket.TokenRequest=socket.handshake.query.token;
     socket.ROOM=socket.handshake.query.room;
 
-    console.log("Room: " + socket.ROOM);
+    //console.log("Room: " + socket.ROOM);
 
     if (socket.ROM=='ADMIN'){
         //neu room la ADMIN tuc la trang web test
         socket.join(socket.ROM);
         //thi ta truc tiep join vao room ADMIN
     }
+
+    var rooms=[];
+    for (i in socket.adapter.rooms){
+        rooms.push(r);
+    }
+    //gui toan bo danh sach rooms cho all user
+    io.sockets.emit("server-send-rooms",rooms);
+    
 
     //hien chi cho phep nhom token=cuongdq moi vao duoc day
     console.log("Seq ("+ ++request_token +") connecting: " + socket.id + ' ' + JSON.stringify(socket.request.connection._peername)
@@ -93,12 +101,7 @@ io.on("connection", function(socket){
         socket.ROOM = roomId;
         //liet ke cac room dang co
         //consol.log(socket.adapter.rooms);
-        var rooms=[];
-        for (i in socket.adapter.rooms){
-            rooms.push(r);
-        }
-        //gui toan bo danh sach rooms cho all user
-        io.sockets.emit("server-send-rooms",rooms);
+        
         //gui cho chinh socket vua tao
         socket.emit("server-send-room-socket",data);
 
