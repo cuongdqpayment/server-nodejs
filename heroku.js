@@ -119,7 +119,8 @@ io.on("connection", function(socket){
         io.emit('users-changed', { user: socket.nickname, event: 'left' });
 
         //gui di trong nhom admin
-        io.sockets.in("ADMIN").emit('server-send-admin-info', 
+        //io.sockets.in("ADMIN").emit
+        socket.broadcast.emit('server-send-admin-info', 
                                         { request_count: request_count,
                                         request_token: request_token,
                                         request_err: request_err });
