@@ -15,23 +15,22 @@
             $(document).ready(function(){
                 
                 socket.on('server-send-admin-info',(data)=>{
-                    console.log("nhan duoc: " + data);
+                        //console.log("nhan duoc: " + data);
                     
-                    $("#dsInfo").html(
-                        "<h4>REQUEST COUNT: "+ data.request_count +"</h4>" +
-                        "<h4>REQUEST TOKEN: "+ data.request_token +"</h4>" +
-                        "<h4>REQUEST ERROR: "+ data.request_err +"</h4>"
-                        );
-                    });
+                        $("#dsInfo").html(
+                            "<h4>REQUEST COUNT: "+ data.request_count +"</h4>" +
+                            "<h4>REQUEST TOKEN: "+ data.request_token +"</h4>" +
+                            "<h4>REQUEST ERROR: "+ data.request_err +"</h4>"
+                            );
+                });
                     
-                    socket.on("server-send-rooms",(rooms)=>{  
-                        
+                socket.on("server-send-rooms",(rooms)=>{  
                         //console.log("cac rooms : " + data);
                     $("#dsRoom").html("");
                     //data la 1 array nen map la duyet ds
                     rooms.map((room)=>{
                         $("#dsRoom").append("<h4 class='room'>"+room+"</h4>");
-                    })
+                        })
                 })
             })
         </script>
