@@ -102,6 +102,15 @@ io.on("connection", function(socket){
                                         request_token: request_token,
                                         request_err: request_err });
 
+
+        var rooms=[];
+        for (i in socket.adapter.rooms){
+            rooms.push(i);
+        }
+        
+        //gui toan bo danh sach rooms cho all user
+        io.sockets.emit("server-send-rooms",rooms);
+                                    
     });
 
 
