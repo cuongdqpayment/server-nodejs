@@ -86,7 +86,8 @@ io.on("connection", function (socket) {
         //tu dong join vao ADMIN
         socket.join(roomId);
     }
-    consol.log(socket.adapter.rooms);
+    
+    console.log(socket.adapter.rooms);
     //GUI DS LUON
     var rooms = [];
     for (i in socket.adapter.rooms) {
