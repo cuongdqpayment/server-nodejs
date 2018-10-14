@@ -29,7 +29,9 @@ var request_token = 0;
 var request_err = 0;
 
 // middleware kiem tra token truoc khi cho ket noi
-io.use((socket, next) => {    
+io.use((socket, next) => { 
+    var isOk = false;
+
     var ip = socket.handshake.headers["x-forwarded-for"];
     var user_agent = socket.handshake.headers['user-agent'];
 
@@ -38,13 +40,20 @@ io.use((socket, next) => {
     //console.log(socket.handshake.query);
     //chuoi handshake.query la sau dau ?
     let token = socket.handshake.query.token;
-
     //neu client khong co ip, khong khai bao moi truong thi se bi reject khong cho vao phong chat
     if (isValid(token)&&ip!=''&&user_agent!='') {
-      return next();
-    }
+        isOk=true;
+    }else {
+        request_err++;
+    } 
 
-    request_err++;
+    //thong bao cho trang quan tri biet tinh hinh hoat dong tong quat cua he thong
+    socket.emit('server-send-admin-info', { request_count: request_count,
+        request_token: request_token,
+        request_err: request_err });
+    
+    if (isOK) return next();
+    
     return next(new Error('authentication error'));
   });
   
@@ -63,11 +72,6 @@ io.on("connection", function(socket){
     //hien chi cho phep nhom token=cuongdq moi vao duoc day
     console.log("Seq ("+ ++request_token +") connecting: " + socket.id + ' ' + JSON.stringify(socket.request.connection._peername));  
 
-    //thong bao cho trang quan tri biet tinh hinh hoat dong tong quat cua he thong
-    socket.emit('server-send-admin-info', { request_count: request_count,
-                                            request_token: request_token,
-                                            request_err: request_err });
-   
     socket.on("create-room",(roomId)=>{
         //join vao mot room ten la data
         socket.join(roomId);
