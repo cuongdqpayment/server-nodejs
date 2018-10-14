@@ -48,8 +48,7 @@ io.use((socket, next) => {
     }
 
     //thong bao cho trang quan tri biet tinh hinh hoat dong tong quat cua he thong
-
-    socket.broadcast.emit('server-send-admin-info',
+    io.sockets.emit('server-send-admin-info',
         {
             request_count: request_count,
             request_token: request_token,
@@ -97,7 +96,8 @@ io.on("connection", function (socket) {
     io.sockets.emit("server-send-rooms", rooms);
 
     //gui thong tin server cho room vua join
-    //socket.broadcast.emit
+    //socket.broadcast.emit //emit to all user except owner.
+    //io.sockets.emit //emit to all user.
     io.sockets.emit('server-send-admin-info',
         {
             request_count: request_count,
@@ -127,13 +127,12 @@ io.on("connection", function (socket) {
 
         //gui di trong nhom admin
         //io.sockets.in("ADMIN").emit
-        socket.broadcast.emit('server-send-admin-info',
-            {
-                request_count: request_count,
-                request_token: request_token,
-                request_err: request_err
-            });
-
+        io.sockets.emit('server-send-admin-info',
+        {
+            request_count: request_count,
+            request_token: request_token,
+            request_err: request_err
+        });
 
         var rooms = [];
         for (i in socket.adapter.rooms) {
