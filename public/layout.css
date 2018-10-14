@@ -1,4 +1,4 @@
 body{background-color: rgb(34, 99, 238)}
-#left {with:20%; float:left; boder:solid 1px pink}
-#right {with:80%; float:right}
+#left {width:40%; float:left; border:solid 1px pink}
+#right {width:60%; float:right}
 #curRoom{background-color: gray; width:100px; float: right; color: white}

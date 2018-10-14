@@ -89,23 +89,6 @@ io.on("connection", function(socket){
         
         //gui cho chinh socket vua tao
         socket.emit("server-send-room-socket",roomId);
-
-        //gui thong tin server cho room vua join
-        socket.broadcast.emit('server-send-admin-info', 
-                        { request_count: request_count,
-                        request_token: request_token,
-                        request_err: request_err });
-
-    
-        var rooms=[];
-        for (i in socket.adapter.rooms){
-            rooms.push(i);
-        }
-        //gui toan bo danh sach rooms cho all user
-        io.sockets.emit("server-send-rooms",rooms);
-
-
-
     })
                                             
     socket.on("disconnect",function(){
@@ -120,6 +103,22 @@ io.on("connection", function(socket){
                                         request_err: request_err });
 
     });
+
+
+     //gui thong tin server cho room vua join
+     socket.broadcast.emit('server-send-admin-info', 
+                        { request_count: request_count,
+                        request_token: request_token,
+                        request_err: request_err });
+
+
+    var rooms=[];
+    for (i in socket.adapter.rooms){
+        rooms.push(i);
+    }
+    
+    //gui toan bo danh sach rooms cho all user
+    io.sockets.emit("server-send-rooms",rooms);
 
 
     socket.on('set-nickname', (nickname) => {
