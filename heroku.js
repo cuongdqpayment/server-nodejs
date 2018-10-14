@@ -85,11 +85,11 @@ io.on("connection", function(socket){
 
     var rooms=[];
     for (i in socket.adapter.rooms){
-        rooms.push(r);
+        rooms.push(i);
     }
     //gui toan bo danh sach rooms cho all user
     io.sockets.emit("server-send-rooms",rooms);
-    
+
 
     //hien chi cho phep nhom token=cuongdq moi vao duoc day
     console.log("Seq ("+ ++request_token +") connecting: " + socket.id + ' ' + JSON.stringify(socket.request.connection._peername)
