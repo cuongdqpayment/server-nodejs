@@ -48,15 +48,16 @@ io.use((socket, next) => {
     } 
 
     //thong bao cho trang quan tri biet tinh hinh hoat dong tong quat cua he thong
-    socket.emit('server-send-admin-info', { request_count: request_count,
+    /* socket.emit('server-send-admin-info', 
+        { request_count: request_count,
         request_token: request_token,
         request_err: request_err });
-    
+     */
     if (isOK) {
         return next();
     }
     return next(new Error('authentication error'));
-    
+
   });
   
 
@@ -73,6 +74,12 @@ io.on("connection", function(socket){
     socket.TokenRequest=socket.handshake.query.token;
     //hien chi cho phep nhom token=cuongdq moi vao duoc day
     console.log("Seq ("+ ++request_token +") connecting: " + socket.id + ' ' + JSON.stringify(socket.request.connection._peername));  
+
+    socket.emit('server-send-admin-info', 
+        { request_count: request_count,
+        request_token: request_token,
+        request_err: request_err });
+    
 
     socket.on("create-room",(roomId)=>{
         //join vao mot room ten la data
