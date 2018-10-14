@@ -84,9 +84,9 @@ io.on("connection", function (socket) {
 
     if (socket.ROOM == "ADMIN") {
         //tu dong join vao ADMIN
-        socket.join(roomId);
+        socket.join(socket.ROOM);
     }
-    
+
     console.log(socket.adapter.rooms);
     //GUI DS LUON
     var rooms = [];
