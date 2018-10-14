@@ -22,7 +22,21 @@ function isValid(tk) {
 }
 
 // middleware kiem tra token truoc khi cho ket noi
+/**
+ * /socket.io/?token= cuongdq&
+ * EIO= 3&
+ * transport= polling&
+ * t= MPn58ac&
+ * sid=O6qU-2OPedMGXTt6AAAC" 
+ * host=cuongdqonline.herokuapp.com 
+ * request_id=df6e1dd4-d961-4a0a-bb60-c13a8736a126 
+ * fwd="123.19.231.242" dyno=web.1 connect=1ms service=1278ms status=200 bytes=225 protocol=https
+ */
 io.use((socket, next) => {
+    
+    //xem thu socket co gi
+    console.log(socket);
+    
     //chuoi handshake.query la sau dau ?
     let token = socket.handshake.query.token;
 
