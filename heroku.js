@@ -54,11 +54,11 @@ io.use((socket, next) => {
         request_err: request_err });
     
 
-    //if (isOK) {
+    if (isOK==true) {
         return next();
-    //}
+    }
 
-    //return next(new Error('authentication error'));
+    return next(new Error('authentication error'));
 
   });
   
