@@ -12,12 +12,12 @@ var server=require("http").Server(app);
 var io = require("socket.io")(server);
 
 function isValid(tk) {
+
     if (tk=="cuongdq"){
+        //Chỉ cho phép ?token=cuongdq mới sử dụng tính năng này được
         return true;
-        
     }else{
         return false;
-
     }
 }
 
@@ -43,7 +43,7 @@ server.listen(port, function () {
 io.on("connection", function(socket){
     socket.TokenRequest=socket.handshake.query.token;
     
-    console.log("co "+socket.TokenRequest+" ket noi len server: " + socket.id);  
+    console.log("Co "+socket.TokenRequest+" ket noi len server: " + socket.id + ' ' + JSON.stringify(socket.request.connection._peername));  
    
     socket.on("disconnect",function(){
         console.log("Ngat " +socket.TokenRequest +" ket noi: " + socket.id);  
