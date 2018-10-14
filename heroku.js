@@ -87,7 +87,7 @@ io.on("connection", function (socket) {
         socket.join(socket.ROOM);
     }
 
-    console.log(socket.adapter.rooms);
+    //console.log(socket.adapter.rooms);
     //GUI DS LUON
     var rooms = [];
     for (i in socket.adapter.rooms) {
@@ -95,6 +95,16 @@ io.on("connection", function (socket) {
     }
     //gui toan bo danh sach rooms cho all user
     io.sockets.emit("server-send-rooms", rooms);
+
+    //gui thong tin server cho room vua join
+    //socket.broadcast.emit
+    io.sockets.emit('server-send-admin-info',
+        {
+            request_count: request_count,
+            request_token: request_token,
+            request_err: request_err
+        });
+
 
     socket.on("create-room", (roomId) => {
         //join vao mot room ten la data
@@ -108,14 +118,7 @@ io.on("connection", function (socket) {
     });
 
 
-    //gui thong tin server cho room vua join
-    socket.broadcast.emit('server-send-admin-info',
-        {
-            request_count: request_count,
-            request_token: request_token,
-            request_err: request_err
-        });
-
+    
 
 
     socket.on("disconnect", function () {
