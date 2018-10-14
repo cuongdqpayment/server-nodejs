@@ -33,7 +33,11 @@ io.use((socket, next) => {
   });
   
 
-server.listen(3000);
+var port = process.env.PORT || 9235;
+
+server.listen(port, function () {
+    console.log('CUONGDQ LISTEN ON: https://cuongdqonline.herokuapp.com:' + port);
+});
 
 //lang nghe client ket noi len server
 io.on("connection", function(socket){
