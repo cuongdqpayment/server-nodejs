@@ -4,9 +4,14 @@
 var express = require("express");
 var app = express();
 app.use(express.static("./public"));
-
 app.set("view engine", "ejs");
 app.set("views", "./views");
+app.get("/", function (req, res) {
+    res.render("trangchu");
+});
+app.get("/test", function (req, res) {
+    res.render("trangcheck");
+});
 
 
 var server = require("http").Server(app);
@@ -159,12 +164,4 @@ io.on("connection", function (socket) {
         io.sockets.in(socket.ROOM).emit("server-send-user-room", data);
     })
 
-});
-
-app.get("/", function (req, res) {
-    res.render("trangchu");
-});
-
-app.get("/test", function (req, res) {
-    res.render("trangcheck");
 });

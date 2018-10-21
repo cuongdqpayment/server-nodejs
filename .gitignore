@@ -4,6 +4,7 @@
 *~
 *.sw[mnpcod]
 *.log
+*.db
 *.tmp
 *.tmp.*
 log.txt
@@ -21,6 +22,7 @@ npm-debug.log*
 coverage/
 dist/
 node_modules/
+db/
 tmp/
 temp/
 platforms/

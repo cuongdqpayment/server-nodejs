@@ -9,28 +9,24 @@
         <link rel="stylesheet" type="text/css" href="layout.css">
         <script>
             //goi dien ket noi len server
-            var socket = io("https://cuongdqonline.herokuapp.com?token=cuongdq&room=ADMIN"
+            var socket = io("http://localhost:3001?token=cuongdq&user=ADMIN&room=ADMIN"
              );
             
             $(document).ready(function(){
-
-                //socket.emit("create-room","ADMIN");
-                
                 socket.on('server-send-admin-info',(data)=>{
-                        
-                        $("#dsInfo").html(
-                            "<h4>REQUEST COUNT: "+ data.request_count +"</h4>" +
-                            "<h4>REQUEST TOKEN: "+ data.request_token +"</h4>" +
-                            "<h4>REQUEST ERROR: "+ data.request_err +"</h4>"
+                    //console.log(data);
+                    $("#dsInfo").html(
+                            "<h4>LIVE COUNT: "+ data.live +"</h4>" +
+                            "<h4>REQUEST COUNT: "+ data.total +"</h4>" +
+                            "<h4>REQUEST TOKEN: "+ data.token +"</h4>" +
+                            "<h4>REQUEST ERROR: "+ data.err +"</h4>"
                             );
                 });
                     
                 socket.on("server-send-rooms",(rooms)=>{  
-                        //console.log("cac rooms : " + data);
                     $("#dsRoom").html("");
-                    //data la 1 array nen map la duyet ds
                     rooms.map((room)=>{
-                        $("#dsRoom").append("<h4 class='room'>"+room+"</h4>");
+                        $("#dsRoom").append("<h4 class='room'>" + room.id + "(" + room.length +")</h4>");
                         })
                 });
             })
