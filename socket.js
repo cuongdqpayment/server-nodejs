@@ -18,6 +18,7 @@ var port = process.env.PORT || 3001;
 
 http.listen(port, function () {
     console.log('listening in http://localhost:' + port);
+    //console.log('CUONGDQ LISTEN ON: https://cuongdqonline.herokuapp.com:' + port);
 });
 
 //database 

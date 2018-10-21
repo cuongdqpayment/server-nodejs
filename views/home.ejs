@@ -1,0 +1,49 @@
+<html>
+    <head>
+        <title>Trang check demo</title>
+        <script src="jquery.js"></script>
+        <!-- thu vien mat dinh khi cai socket.io
+        neu muon tach client rieng de goi thi copy thu vien nay ve
+        tai thu muc public de su dung -->
+        <script src="socket.io/socket.io.js"></script>
+        <link rel="stylesheet" type="text/css" href="layout.css">
+        <script>
+            //goi dien ket noi len server
+            //var socket = io("http://localhost:3001?token=cuongdq"
+            var socket = io("https://cuongdqonline.herokuapp.com?token=cuongdq"
+             );
+            
+            $(document).ready(function(){
+                socket.on('server-send-admin-info',(data)=>{
+                    //console.log(data);
+                    $("#dsInfo").html(
+                            "<h4>LIVE COUNT: "+ data.live +"</h4>" +
+                            "<h4>REQUEST COUNT: "+ data.total +"</h4>" +
+                            "<h4>REQUEST TOKEN: "+ data.token +"</h4>" +
+                            "<h4>REQUEST ERROR: "+ data.err +"</h4>"
+                            );
+                });
+                    
+                socket.on("server-send-rooms",(rooms)=>{  
+                    $("#dsRoom").html("");
+                    rooms.map((room)=>{
+                        $("#dsRoom").append("<h4 class='room'>" + room.id + "(" + room.length +")</h4>");
+                        })
+                });
+            })
+        </script>
+    </head>
+    <body>
+        <h1> CUONGDQONLINE service chat</h1>
+        <div id="left">
+            <h2>Server Info:</h2>
+                <div id="dsInfo"></div>
+            <h2>Rooms:</h2>
+                <div id="dsRoom"></div>
+        </div>
+        <h4 id="curRoom">...</h4>
+        <div id="right">
+
+        </div>
+    </body>
+</html>

@@ -1,153 +1,230 @@
-//may chu heroku, phuc vu test online cho ionic 
-//va web server
+//test thu ionic
 
 var express = require("express");
 var app = express();
+
 app.use(express.static("./public"));
 app.set("view engine", "ejs");
 app.set("views", "./views");
+
 app.get("/", function (req, res) {
-    res.render("trangchu");
-});
-app.get("/test", function (req, res) {
-    res.render("trangcheck");
+    res.render("home");
 });
 
+let http = require('http').Server(app);
+let io = require('socket.io')(http);
 
-var server = require("http").Server(app);
+var port = process.env.PORT || 3001;
 
-//yeu cau thu vien socket io
-var io = require("socket.io")(server);
+http.listen(port, function () {
+    //console.log('listening in http://localhost:' + port);
+    console.log('CUONGDQ LISTEN ON: https://cuongdqonline.herokuapp.com:' + port);
+});
 
+//database 
+var isDBOK = false;
+const sqlite3 = require('sqlite3').verbose();
+var db = new sqlite3.Database('./db/sockets.db', (err) => {
+    if (err) {
+        console.error(err.message);
+    } else{
+        console.log('Connected to the sockets.db database.');
+        db.serialize(function() {
+            db.run("CREATE TABLE if not exists USERS ("
+            + " USER_NAME TEXT PRIMARY KEY  NOT NULL"
+            + " ,LAST_LOGIN DATETIME)");
+            db.run("CREATE TABLE if not exists LOG_CLIENTS ("
+            + " IP TEXT"
+            + " ,USER_AGENT TEXT"
+            + " ,TOKEN TEXT"
+            + " ,ID TEXT"
+            + " ,USER TEXT"
+            + " ,ROOM TEXT"
+            + " ,LAST_LOGIN DATETIME)");
+        isDBOK = true;
+        });
+    }
+});
+/////////////////////////////
+//array so sanh id co ton tai khong
+function isExistObjectId(oId, arr) {
+    //console.log(oId);
+    for(var i in arr) {
+        //console.log(arr[i]);
+        if(oId == arr[i].id) {
+            return true;
+        }
+    }
+    return false;
+}
+/////////////////////////////
+//array xoa object trong array neu trung thi tra ve 1 object
+function removeObjectId(oId, arr) {
+    for (var i = 0; i < arr.length; i++) {
+        var obj = arr[i];
+        if (obj.id==oId){
+            return arr.splice(i,1);;
+        }
+    }
+    //console.log("remove: " + arr);
+    return null;
+}
+/////////////////////////////
 function isValid(tk) {
 
     if (tk == "cuongdq") {
-        //Chỉ cho phép ?token=cuongdq mới sử dụng tính năng này được
         return true;
     } else {
         return false;
     }
 }
+/////////////////////////////
+// socket.io
+var client;
+var clients=[];
 
-var request_count = 0;
-var request_token = 0;
-var request_err = 0;
+var room;
+var rooms=[];
 
-// middleware kiem tra token truoc khi cho ket noi
+var sys_info={
+    total:0,
+    token:0,
+    live:0,
+    err:0
+};
+
 io.use((socket, next) => {
-    var isOK = false;
+    /**
+     * Cac lenh emit trong use khong co tac dung nhe
+     * Chi cac lenh trong on moi co tac dung
+     */
+    let isOK = false;
+    
+    client = new Object;
+    client.id = socket.id;
+    client.ip = socket.handshake.headers["x-forwarded-for"];
+    client.user_agent = socket.handshake.headers['user-agent'];
+    client.token = socket.handshake.query.token;
+    client.user = socket.handshake.query.user;
+    client.roomId = socket.handshake.query.room;
+    client.datatime = (new Date()).toLocaleTimeString();
 
-    var ip = socket.handshake.headers["x-forwarded-for"];
-    var user_agent = socket.handshake.headers['user-agent'];
-
-    //Lay dia chi ip yeu cau tu dau
-    console.log('Request(' + ++request_count + ') ip: ' + ip + ', agent: ' + user_agent);
-    //console.log(socket.handshake.query);
-    //chuoi handshake.query la sau dau ?
-    let token = socket.handshake.query.token;
-    //neu client khong co ip, khong khai bao moi truong thi se bi reject khong cho vao phong chat
-    if (isValid(token) && ip != '' && user_agent != '') {
+    sys_info.total++;
+    if (isValid(client.token) 
+        && client.ip != '' 
+        && client.user_agent != '') {
+        sys_info.token++;
         isOK = true;
     } else {
-        request_err++;
+        sys_info.err++;
     }
-
-    //thong bao cho trang quan tri biet tinh hinh hoat dong tong quat cua he thong
-    io.sockets.emit('server-send-admin-info',
-        {
-            request_count: request_count,
-            request_token: request_token,
-            request_err: request_err
+    //chen thong tin log vao csdl
+    if (isDBOK){
+        
+        var stmt = db.prepare("INSERT INTO LOG_CLIENTS"
+        +"(IP, USER_AGENT, TOKEN, ID, USER, ROOM, LAST_LOGIN)"
+        +" VALUES "
+        +"( ?, ?, ?, ?, ?, ?, ?)");
+         
+        stmt.run(client.ip, 
+                 client.user_agent, 
+                 client.token,
+                 client.id, 
+                 client.user, 
+                 client.roomId, 
+                 client.datatime);
+        stmt.finalize();
+        
+        let i=0;
+         db.each("SELECT IP, USER_AGENT, TOKEN, ID, USER, ROOM, LAST_LOGIN FROM LOG_CLIENTS", function(err, row) {
+            /* console.log(
+                ++i 
+                + ": "+row.IP + "; " 
+                + row.USER_AGENT + "; " 
+                + row.ID + "; " 
+                + row.TOKEN + "; " 
+                + row.ROOM + "; " 
+                + row.USER + "; " 
+                + row.LAST_LOGIN);    */
         });
+    }
+    ///////////////////////////////
 
     if (isOK) {
         return next();
     }
-
     return next(new Error('authentication error'));
-
 });
+/////////////////////////////
+io.on('connection', (socket) => {
+    //gan room, user cho socket
+    sys_info.live++;
+    socket.ROOMID = client.roomId;
+    socket.USERNAME = client.user;
 
-
-var port = process.env.PORT || 9235;
-
-server.listen(port, function () {
-    console.log('CUONGDQ LISTEN ON: https://cuongdqonline.herokuapp.com:' + port);
-});
-
-//lang nghe client ket noi len server
-io.on("connection", function (socket) {
-    //moi khi co nguoi request io thanh cong voi token quy dinh
-    //ghi lai token requet vao day de biet ho truy cap nhom lam viec nao
-    socket.TokenRequest = socket.handshake.query.token;
-    socket.ROOM = socket.handshake.query.room;
-
-    //hien chi cho phep nhom token=cuongdq moi vao duoc day
-    console.log("Seq (" + ++request_token + ") connecting: " + socket.id + ' ' + JSON.stringify(socket.request.connection._peername)
-        + ", " + socket.ROOM);
-
-    if (socket.ROOM == "ADMIN") {
-        //tu dong join vao ADMIN
-        socket.join(socket.ROOM);
-    }
-
-    //console.log(socket.adapter.rooms);
-    //GUI DS LUON
-    var rooms = [];
-    for (i in socket.adapter.rooms) {
-        rooms.push(i);
-    }
-    //gui toan bo danh sach rooms cho all user
-    io.sockets.emit("server-send-rooms", rooms);
-
-    //gui thong tin server cho room vua join
-    //socket.broadcast.emit //emit to all user except owner.
-    //io.sockets.emit //emit to all user.
-    io.sockets.emit('server-send-admin-info',
-        {
-            request_count: request_count,
-            request_token: request_token,
-            request_err: request_err
-        });
-
-
-    socket.on("create-room", (roomId) => {
-        //join vao mot room ten la data
-        socket.join(roomId);
-        socket.ROOM = roomId;
-        //liet ke cac room dang co
-        //consol.log(socket.adapter.rooms);
-
-        //gui cho chinh socket vua tao
-        socket.emit("server-send-room-socket", roomId);
-    });
-
-
-    
-
-
-    socket.on("disconnect", function () {
-        console.log("Disconnect seq(" + request_token-- + "): " + socket.id);
-        io.emit('users-changed', { user: socket.nickname, event: 'left' });
-
-        //gui di trong nhom admin
-        //io.sockets.in("ADMIN").emit
-        io.sockets.emit('server-send-admin-info',
-        {
-            request_count: request_count,
-            request_token: request_token,
-            request_err: request_err
-        });
-
-        var rooms = [];
-        for (i in socket.adapter.rooms) {
-            rooms.push(i);
+    if (socket.ROOMID !=undefined 
+        && socket.ROOMID !=''){
+            socket.join(socket.ROOMID);
+        if (isExistObjectId(socket.ROOMID, rooms)){
+            //chinh sua them id
+            room = removeObjectId(socket.ROOMID,rooms)[0];
+            room.clients.push(client);
+            room.length = socket.adapter.rooms[socket.ROOMID].length;
+            /* console.log("ROOM = " + room.id);
+            console.log(room.clients); */
+        }else{
+            //chua co room
+            room = new Object();
+            room.id = socket.ROOMID;
+            room.clients = [client];
+            room.length = socket.adapter.rooms[socket.ROOMID].length;
         }
-        //gui toan bo danh sach rooms cho all user
-        io.sockets.emit("server-send-rooms", rooms);
+        rooms.push(room);
+        //console.log(rooms);
+    }
+    //lay dia chi ip cua may tram
+    clients.push(client);
+    
+    io.emit("server-send-rooms", rooms);
+    io.emit('server-send-admin-info',sys_info);
+
+    console.log('New io.on: ' + 
+                    + clients.length + "; " 
+                    + client.datatime + "; " 
+                    + client.id + "; " 
+                    + client.token + "; " 
+                    + client.roomId + "; " 
+                    + client.user + "; " 
+                    + client.ip + "; " 
+                    + client.user_agent);
+    
+    
+    socket.on('disconnect', function () {
+        sys_info.live--;
+        removeObjectId(socket.id, clients);
+
+        console.log('Disconnect from: ('
+         + clients.length
+         + ')'
+         + socket.id
+         );
+
+        if (isExistObjectId(socket.ROOMID, rooms)){
+            //chinh sua xoa bo client trong room
+            var roomOld = removeObjectId(socket.ROOMID,rooms)[0];
+            removeObjectId(socket.id,roomOld.clients);
+            room.length = roomOld.clients.length;
+            rooms.push(roomOld);
+        }
+
+        io.emit('users-changed', { user: socket.nickname, event: 'left' });
+        
+        io.emit("server-send-rooms", rooms);
+
+        io.emit('server-send-admin-info', sys_info);
 
     });
-
+    
 
     socket.on('set-nickname', (nickname) => {
         socket.nickname = nickname;
@@ -157,11 +234,4 @@ io.on("connection", function (socket) {
     socket.on('add-message', (message) => {
         io.emit('message', { text: message.text, from: socket.nickname, created: new Date() });
     });
-
-    //su kien client emit room
-    socket.on("user-chat-room", (data) => {
-        //chi gui noi dung cho phong chat thoi
-        io.sockets.in(socket.ROOM).emit("server-send-user-room", data);
-    })
-
 });
